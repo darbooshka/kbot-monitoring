@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart
+    kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart --volumes configMap
     kompose.version: 1.28.0 (c4137012e)
   creationTimestamp: null
   labels:
@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart
+        kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart --volumes configMap
         kompose.version: 1.28.0 (c4137012e)
       creationTimestamp: null
       labels:
@@ -33,9 +33,11 @@ spec:
           resources: {}
           volumeMounts:
             - mountPath: /fluent-bit/bin/docker-metadata.lua
-              name: fluentbit-claim0
+              name: fluentbit-cm0
+              subPath: docker-metadata.lua
             - mountPath: /fluent-bit/etc/fluent-bit.conf
-              name: fluentbit-claim1
+              name: fluentbit-cm1
+              subPath: fluent-bit.conf
             - mountPath: /var
               name: fluentbit-claim2
             - mountPath: /host/proc
@@ -44,12 +46,18 @@ spec:
               name: fluentbit-claim4
       restartPolicy: Always
       volumes:
-        - name: fluentbit-claim0
-          persistentVolumeClaim:
-            claimName: fluentbit-claim0
-        - name: fluentbit-claim1
-          persistentVolumeClaim:
-            claimName: fluentbit-claim1
+        - configMap:
+            items:
+              - key: docker-metadata.lua
+                path: docker-metadata.lua
+            name: fluentbit-cm0
+          name: fluentbit-cm0
+        - configMap:
+            items:
+              - key: fluent-bit.conf
+                path: fluent-bit.conf
+            name: fluentbit-cm1
+          name: fluentbit-cm1
         - name: fluentbit-claim2
           persistentVolumeClaim:
             claimName: fluentbit-claim2
