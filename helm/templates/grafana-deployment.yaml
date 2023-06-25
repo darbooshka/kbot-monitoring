@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart
+    kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart --volumes configMap
     kompose.version: 1.28.0 (c4137012e)
   creationTimestamp: null
   labels:
@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart
+        kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart --volumes configMap
         kompose.version: 1.28.0 (c4137012e)
       creationTimestamp: null
       labels:
@@ -44,10 +44,14 @@ spec:
           resources: {}
           volumeMounts:
             - mountPath: /etc/grafana/provisioning/datasources/datasources.yaml
-              name: grafana-claim0
+              name: grafana-cm0
+              subPath: datasources.yaml
       restartPolicy: Always
       volumes:
-        - name: grafana-claim0
-          persistentVolumeClaim:
-            claimName: grafana-claim0
+        - configMap:
+            items:
+              - key: grafana-datasources.yaml
+                path: datasources.yaml
+            name: grafana-cm0
+          name: grafana-cm0
 status: {}

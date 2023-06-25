@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart
+    kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart --volumes configMap
     kompose.version: 1.28.0 (c4137012e)
   creationTimestamp: null
   labels:
@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart
+        kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart --volumes configMap
         kompose.version: 1.28.0 (c4137012e)
       creationTimestamp: null
       labels:
@@ -36,10 +36,14 @@ spec:
           resources: {}
           volumeMounts:
             - mountPath: /etc/loki/local-config.yaml
-              name: loki-claim0
+              name: loki-cm0
+              subPath: local-config.yaml
       restartPolicy: Always
       volumes:
-        - name: loki-claim0
-          persistentVolumeClaim:
-            claimName: loki-claim0
+        - configMap:
+            items:
+              - key: loki-local-config.yaml
+                path: local-config.yaml
+            name: loki-cm0
+          name: loki-cm0
 status: {}

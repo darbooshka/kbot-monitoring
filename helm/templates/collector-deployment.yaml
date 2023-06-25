@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart
+    kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart --volumes configMap
     kompose.version: 1.28.0 (c4137012e)
   creationTimestamp: null
   labels:
@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart
+        kompose.cmd: kompose convert --file ./kbot/otel/docker-compose.yaml --out ./kbot-monitoring/helm --chart --volumes configMap
         kompose.version: 1.28.0 (c4137012e)
       creationTimestamp: null
       labels:
@@ -35,10 +35,14 @@ spec:
           resources: {}
           volumeMounts:
             - mountPath: /etc/otel-collector-config.yaml
-              name: collector-claim0
+              name: collector-cm0
+              subPath: otel-collector-config.yaml
       restartPolicy: Always
       volumes:
-        - name: collector-claim0
-          persistentVolumeClaim:
-            claimName: collector-claim0
+        - configMap:
+            items:
+              - key: otel-collector-contrib.yaml
+                path: otel-collector-config.yaml
+            name: collector-cm0
+          name: collector-cm0
 status: {}
