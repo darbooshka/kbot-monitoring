@@ -13,6 +13,12 @@ spec:
     - name: "4317"
       port: 4317
       targetPort: 4317
+    - name: "3030-otlp-http"
+      port: 3030
+      targetPort: 3030
+    - name: "8889-prometheus"
+      port: 8889
+      targetPort: 8889
   selector:
     io.kompose.service: collector
 status:
