@@ -33,7 +33,7 @@ spec:
               name: fluentbit-cm1
               subPath: fluent-bit.conf
             - mountPath: /fluent-bit/etc/parsers.conf
-              name: fluentbit-cm-parsers
+              name: fluentbit-cm1
               subPath: parsers.conf
 
             # - mountPath: /var
