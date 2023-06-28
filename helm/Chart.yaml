@@ -1,6 +1,6 @@
 name: otel
 description: A generated Helm Chart for ./kbot-monitoring/helm from Skippbox Kompose
-version: 0.0.7
+version: 0.0.8
 apiVersion: v1
 keywords:
   - ./kbot-monitoring/helm

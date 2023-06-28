@@ -67,7 +67,7 @@ spec:
             items:
               - key: parsers.conf
                 path: parsers.conf
-            name: fluentbit-cm-parsers
+            name: fluentbit-cm1
           name: fluentbit-cm1
 
         # - hostPath:
