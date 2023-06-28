@@ -30,11 +30,6 @@ data:
           script /fluent-bit/bin/docker-metadata.lua
           call   encrich_with_docker_metadata
 
-    #   [INPUT]
-    #       name      dummy
-    #       dummy     {"key": 1, "sub": {"stream": "stdout", "id": "some id"}, "kubernetes": {"labels": {"team": "Santiago Wanderers"}}}
-    #       samples   10
-          
       [INPUT]
           name            node_exporter_metrics
           tag             node_metrics
