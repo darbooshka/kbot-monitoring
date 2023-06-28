@@ -1,9 +1,18 @@
 apiVersion: v1
 data:
+  parsers.conf: |
+      [PARSER]
+          Name        docker
+          Format      json
+          Time_Key    time
+          Time_Format %Y-%m-%dT%H:%M:%S.%L
+          Time_Keep   On
+
   fluent-bit.conf: |
       [SERVICE]
           flush 1
           log_level info
+          Parsers_File  parsers.conf
 
       [INPUT]
           Name   tail
@@ -21,9 +30,20 @@ data:
           script /fluent-bit/bin/docker-metadata.lua
           call   encrich_with_docker_metadata
 
+      [INPUT]
+          name      dummy
+          dummy     {"key": 1, "sub": {"stream": "stdout", "id": "some id"}, "kubernetes": {"labels": {"team": "Santiago Wanderers"}}}
+          samples   10
+          
+      [INPUT]
+          name            node_exporter_metrics
+          tag             node_metrics
+          scrape_interval 10
+          path.procfs     /host/proc
+          path.sysfs      /host/sys
+
       [OUTPUT]
           Name                 opentelemetry
-          # Match                source.docker.*
           Match                *
           Host                 collector
           Port                 3030
@@ -37,18 +57,6 @@ data:
           add_label            app fluent-bit
           add_label            color blue
           
-      [INPUT]
-          name      dummy
-          dummy     {"key": 1, "sub": {"stream": "stdout", "id": "some id"}, "kubernetes": {"labels": {"team": "Santiago Wanderers"}}}
-          samples   10
-          
-      [INPUT]
-          name            node_exporter_metrics
-          tag             node_metrics
-          scrape_interval 10
-          path.procfs     /host/proc
-          path.sysfs      /host/sys
-
 kind: ConfigMap
 metadata:
   annotations:
