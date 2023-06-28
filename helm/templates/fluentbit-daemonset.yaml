@@ -61,10 +61,6 @@ spec:
             items:
               - key: fluent-bit.conf
                 path: fluent-bit.conf
-            name: fluentbit-cm1
-          name: fluentbit-cm1
-        - configMap:
-            items:
               - key: parsers.conf
                 path: parsers.conf
             name: fluentbit-cm1
